@@ -2,8 +2,8 @@
 layout: twoColumn
 section: resources
 type: article
-title:  "Transfer workflow"
-description: "Build bank transfers programmatically into your site or app. Get to know the ACH transfer process, including transfer statuses and processing times."
+title:  "Bank Transfer workflow"
+description: "Bank transfer API to programmatically send money online"
 ---
 
 # Transfer workflow
