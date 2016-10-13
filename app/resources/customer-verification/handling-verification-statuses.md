@@ -16,6 +16,92 @@ There are various reasons a Customer will result in a status other than `verifie
 #### Testing verification statuses in Sandbox: 
 By submitting `verified`, `retry`, `document`, or `suspended` in the firstName parameter, you can create a new verified Customer with that status. To get a verified Customer with the `retry` status to `verified`, you need to POST to /customers/{id} with `verified` or anything else and the verified Customer will get `verified`.  The full SSN is required in the when updating a Customer with a `retry` verification status.  If only the last four of the SSN is submitted, Dwolla returns "invalid SSN", and initiating a POST again with a Full SSN will result in a `document` status.
 
+If all required information has previosly been submitted, a customer can be moved from `retry` to `verified` in the sandbox.
+
+```raw
+POST https://api.dwolla.com/customers/132681fa-1b4d-4181-8ff2-619ca46235b1
+Content-Type: application/vnd.dwolla.v1.hal+json
+Accept: application/vnd.dwolla.v1.hal+json
+Authorization: Bearer pBA9fVDBEyYZCEsLf/wKehyh1RTpzjUj5KzIRfDi0wKTii7DqY
+
+{
+  "firstName": "verified",
+  "lastName": "Doe",
+  "email": "johndoe@nomail.net",
+  "type": "personal",
+  "ssn ": "202-99-1516"
+}
+```
+```ruby
+customer_url = 'https://api.dwolla.com/customers/132681fa-1b4d-4181-8ff2-619ca46235b1'
+request_body = {
+      "firstName" => "verified",
+       "lastName" => "Doe",
+          "email" => "jdoe@nomail.com",
+           "type" => "personal",
+            "ssn" => "123-45-6789"
+}
+
+# Using DwollaV2 - https://github.com/Dwolla/dwolla-v2-ruby (Recommended)
+customer = account_token.post customer_url, request_body
+customer.id # => "132681fa-1b4d-4181-8ff2-619ca46235b1"
+
+# Using DwollaSwagger - https://github.com/Dwolla/dwolla-swagger-ruby
+customer = DwollaSwagger::CustomersApi.update_customer(customer_url, :body => request_body)
+customer.id # => "132681fa-1b4d-4181-8ff2-619ca46235b1"
+```
+```javascript
+// Using dwolla-v2 - https://github.com/Dwolla/dwolla-v2-node
+var customerUrl = 'https://api.dwolla.com/customers/132681fa-1b4d-4181-8ff2-619ca46235b1';
+var requestBody = {
+  firstName: "verified",
+  lastName: "Doe",
+  email: "johndoe@dwolla.com",
+  type: "personal",
+  ssn: "202-99-1516"
+};
+
+accountToken
+  .post(customerUrl, requestBody)
+  .then(function(res) {
+    res.body.id; // => '132681fa-1b4d-4181-8ff2-619ca46235b1'
+  });
+```
+```python
+customer_url = 'https://api.dwolla.com/customers/132681fa-1b4d-4181-8ff2-619ca46235b1'
+request_body = {
+  "firstName": "verified",
+  "lastName": "Doe",
+  "email": "jdoe@nomail.com",
+  "type": "personal",
+  "ssn": "123-45-6789"
+}
+
+# Using dwollav2 - https://github.com/Dwolla/dwolla-v2-python (Recommended)
+customer = account_token.post('customers', request_body)
+customer.body.id # => '132681fa-1b4d-4181-8ff2-619ca46235b1'
+
+# Using dwollaswagger - https://github.com/Dwolla/dwolla-swagger-python
+customers_api = dwollaswagger.CustomersApi(client)
+customer = customers_api.update_customer(customer_url, body = request_body)
+customer.id # => '132681fa-1b4d-4181-8ff2-619ca46235b1'
+```
+```php
+<?php
+$customersApi = DwollaSwagger\CustomersApi($apiClient);
+
+$retryCustomer = $customersApi->create(array (
+  'firstName' => 'verified',
+  'lastName' => 'Doe',
+  'email' => 'johndoe@nomail.net',
+  'type' => 'personal',
+  'ssn' => '202-99-1516',
+));
+
+print($retryCustomer); # => 132681fa-1b4d-4181-8ff2-619ca46235b1
+?>
+```
+
 ### Handling status: `retry`
 
 If the Customer has a status of `retry`, some information may have been miskeyed. You have one more opportunity to correct any mistakes. This time, you’ll need to provide the customer’s full SSN.
